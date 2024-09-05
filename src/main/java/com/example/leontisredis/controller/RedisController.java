@@ -21,7 +21,7 @@ public class RedisController {
         return redisService.decrementCounter();
     }
 
-    @GetMapping
+    @GetMapping("/buscar")
     public Long getCounterValue() {
         return redisService.getCounterValue();
     }
