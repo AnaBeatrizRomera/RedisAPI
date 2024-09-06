@@ -12,7 +12,7 @@ WORKDIR /app
 COPY . .
 
 # Executa o Maven para construir o projeto
-RUN mvn clean install -DskipTests
+RUN mvn clean install -DskipTests4
 
 # Etapa de Execução: Ubuntu com Redis e Java
 FROM ubuntu:latest
