@@ -1,27 +1,31 @@
-# Use uma imagem base do Maven para construir a aplicação
-FROM maven:3.8.3-openjdk-17 as Build
+# Etapa de Build
+FROM ubuntu:latest AS build
 
-# Define o diretório de trabalho dentro do container
+# Atualiza e instala dependências necessárias
+RUN apt-get update && \
+    apt-get install -y openjdk-17-jdk maven
+
+# Define o diretório de trabalho
 WORKDIR /app
 
-# Copia o arquivo pom.xml e o diretório src para o diretório de trabalho
-COPY pom.xml .
-COPY src ./src
+# Copia todos os arquivos do projeto para o diretório de trabalho
+COPY . .
 
-# Executa o comando Maven para construir a aplicação
-RUN mvn clean package -DskipTests
+# Executa o Maven para construir o projeto
+RUN mvn clean install
 
-# Use uma imagem base do OpenJDK para executar a aplicação
+# Etapa de Execução
 FROM openjdk:17-jdk-slim
 
-# Define o diretório de trabalho dentro do container
+# Expõe a porta 8080
+EXPOSE 8080
+
+# Define o diretório de trabalho
 WORKDIR /app
 
-# Copia o JAR construído da fase anterior para o diretório de trabalho
-COPY --from=Build /app/target/*.jar app.jar
+# Copia o JAR gerado da etapa de build
+COPY --from=build /app/target/deploy_render-1.0.0.jar app.jar
 
-# Expõe a porta em que a aplicação será executada
-EXPOSE 8083
-
-# Define o comando padrão para executar a aplicação
+# Define o comando de entrada
 ENTRYPOINT ["java", "-jar", "app.jar"]
+, "-jar", "app.jar"]
