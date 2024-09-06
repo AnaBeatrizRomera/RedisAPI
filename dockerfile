@@ -1,4 +1,6 @@
-# Define o diretório de trabalho dentro do container
+
+# Use uma imagem base do Maven para construir a aplicação
+FROM maven:3.8.3-openjdk-17 as Build
 WORKDIR /app
 
 # Copia o arquivo pom.xml e o diretório src para o diretório de trabalho
