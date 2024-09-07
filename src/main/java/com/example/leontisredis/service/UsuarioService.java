@@ -9,6 +9,8 @@ public class UsuarioService {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
+    private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
+
     public UsuarioService(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
@@ -23,11 +25,18 @@ public class UsuarioService {
         redisTemplate.opsForValue().decrement("atividade");
     }
 
-    // Obter a contagem de atividade do usuário
     public Integer getUserActivity() {
+        try {
             String countStr = (String) redisTemplate.opsForValue().get("atividade");
             Integer count = countStr != null ? Integer.valueOf(countStr) : 0;
+            logger.info("Contagem de atividade obtida com sucesso: {}", count);
             return count;
-
+        } catch (NumberFormatException e) {
+            logger.error("Erro ao converter a contagem de atividade", e);
+            throw new RuntimeException("Erro ao converter a contagem de atividade", e);
+        } catch (Exception e) {
+            logger.error("Erro ao buscar contagem de atividade do usuário", e);
+            throw e;
+        }
     }
 }
